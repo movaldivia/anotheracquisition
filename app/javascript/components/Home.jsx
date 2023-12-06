@@ -60,13 +60,13 @@ export default function HomePage() {
                   </p>
                   <div className="mt-10 flex items-center gap-x-6">
                     <Link
-                      to="/signup"
+                      to="/app/signup"
                       className="rounded-md border-2 border-indigo-600 bg-indigo-600 px-8 md:px-12 py-5 text-sm md:text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 hover:border-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                       Get started
                     </Link>
                     <Link
-                      to="/login"
+                      to="/app/signin"
                       className="rounded-md border-2 border-indigo-600 text-indigo-600 px-8 md:px-12 py-5 text-sm md:text-lg font-semibold bg-white shadow-lg hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                       Login
