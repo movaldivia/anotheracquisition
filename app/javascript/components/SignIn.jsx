@@ -1,17 +1,49 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useNavigate, redirect } from "react-router-dom";
 
-export default function Login() {
+// utils/csrf.js
+function csrfToken() {
+  const meta = document.querySelector("meta[name=csrf-token]");
+  const token = meta && meta.getAttribute("content");
+
+  return token ?? false;
+}
+
+export { csrfToken };
+
+export default function SignIn() {
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("email", "movaldivia14@uc.cl");
+    formData.append("password", "wena1233");
+
+    try {
+      const response = await fetch("http://localhost:3000/auth/sign_in", {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": csrfToken(),
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const bearerToken = response.headers.get("Authorization");
+
+      localStorage.setItem("bearerToken", bearerToken);
+      navigate("/app/events");
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  };
   return (
     <>
-      {/*
-          This example requires updating your template:
-  
-          ```
-          <html class="h-full bg-white">
-          <body class="h-full">
-          ```
-        */}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -20,7 +52,7 @@ export default function Login() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
                 htmlFor="email"
@@ -74,7 +106,7 @@ export default function Login() {
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{" "}
             <Link
-              to="/app/singup"
+              to="/app/signup"
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
               Register here

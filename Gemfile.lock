@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/lynndylanhurley/devise_token_auth
+  revision: 6b0659f18c678b319913d0fb053e96aa555857aa
+  specs:
+    devise_token_auth (1.2.2)
+      bcrypt (~> 3.0)
+      devise (> 3.5.2, < 5)
+      rails (>= 4.2.0, < 7.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -76,6 +85,7 @@ GEM
       mutex_m
       tzinfo (~> 2.0)
     base64 (0.2.0)
+    bcrypt (3.1.20)
     bigdecimal (3.1.4)
     bindex (0.8.1)
     bootsnap (1.17.0)
@@ -90,6 +100,12 @@ GEM
     debug (1.8.0)
       irb (>= 1.5.0)
       reline (>= 0.3.1)
+    devise (4.9.3)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 4.1.0)
+      responders
+      warden (~> 1.2.3)
     drb (2.2.0)
       ruby2_keywords
     erubi (1.12.0)
@@ -143,19 +159,20 @@ GEM
       racc (~> 1.4)
     nokogiri (1.15.5-x86_64-linux)
       racc (~> 1.4)
+    orm_adapter (0.5.0)
     psych (5.1.1.1)
       stringio
     puma (6.4.0)
       nio4r (~> 2.0)
     racc (1.7.3)
-    rack (3.0.8)
-    rack-session (2.0.0)
-      rack (>= 3.0.0)
+    rack (2.2.8)
+    rack-session (1.0.2)
+      rack (< 3)
     rack-test (2.1.0)
       rack (>= 1.3)
-    rackup (2.1.0)
-      rack (>= 3)
-      webrick (~> 1.8)
+    rackup (1.0.0)
+      rack (< 3)
+      webrick
     rails (7.1.2)
       actioncable (= 7.1.2)
       actionmailbox (= 7.1.2)
@@ -197,6 +214,9 @@ GEM
       connection_pool
     reline (0.4.1)
       io-console (~> 0.5)
+    responders (3.1.1)
+      actionpack (>= 5.2)
+      railties (>= 5.2)
     ruby2_keywords (0.0.5)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
@@ -219,6 +239,8 @@ GEM
       railties (>= 6.0.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    warden (1.2.9)
+      rack (>= 2.0.9)
     web-console (4.2.1)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
@@ -239,6 +261,8 @@ DEPENDENCIES
   bootsnap
   cssbundling-rails
   debug
+  devise
+  devise_token_auth!
   hotwire-livereload
   jbuilder
   jsbundling-rails
