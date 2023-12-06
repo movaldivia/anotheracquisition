@@ -1,6 +1,7 @@
 import React from "react";
 import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
+import { useNavigate, redirect } from "react-router-dom";
 import { Fragment } from "react";
 import {
   CalendarIcon,
@@ -73,10 +74,50 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+function csrfToken() {
+  const meta = document.querySelector("meta[name=csrf-token]");
+  const token = meta && meta.getAttribute("content");
+
+  return token ?? false;
+}
+
 export default function NewEvent() {
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const bearerToken = localStorage.getItem("bearerToken");
+
+      const response = await fetch("http://localhost:3000/api/events/", {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": csrfToken(),
+          Authorization: bearerToken,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: "An event",
+          description: "description",
+          organizer: "organizer",
+          location: "location",
+          datetime: new Date().toLocaleString(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      navigate("/app/events");
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  };
+
   return (
     <div className="h-4/6 w-4/6 flex justify-center mt-24">
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -145,161 +186,6 @@ export default function NewEvent() {
                 </p>
               </div>
             </div>
-          </div>
-
-          <div className="border-b border-gray-900/10 pb-12">
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Location
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Use a permanent address where you can receive mail.
-            </p>
-
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Country
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="country"
-                    name="country"
-                    autoComplete="country-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div className="col-span-full">
-                <label
-                  htmlFor="street-address"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Street address
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    name="street-address"
-                    id="street-address"
-                    autoComplete="street-address"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div className="sm:col-span-2 sm:col-start-1">
-                <label
-                  htmlFor="city"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  City
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    name="city"
-                    id="city"
-                    autoComplete="address-level2"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="region"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  State / Province
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    name="region"
-                    id="region"
-                    autoComplete="address-level1"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center text-gray-900">
-              <button
-                type="button"
-                className="-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
-              >
-                <span className="sr-only">Previous month</span>
-                <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-              </button>
-              <div className="flex-auto text-sm font-semibold">January</div>
-              <button
-                type="button"
-                className="-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
-              >
-                <span className="sr-only">Next month</span>
-                <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-              </button>
-            </div>
-            <div className="mt-6 grid grid-cols-7 text-xs leading-6 text-gray-500">
-              <div>M</div>
-              <div>T</div>
-              <div>W</div>
-              <div>T</div>
-              <div>F</div>
-              <div>S</div>
-              <div>S</div>
-            </div>
-            <div className="isolate mt-2 grid grid-cols-7 gap-px rounded-lg bg-gray-200 text-sm shadow ring-1 ring-gray-200">
-              {days.map((day, dayIdx) => (
-                <button
-                  key={day.date}
-                  type="button"
-                  className={classNames(
-                    "py-1.5 hover:bg-gray-100 focus:z-10",
-                    day.isCurrentMonth ? "bg-white" : "bg-gray-50",
-                    (day.isSelected || day.isToday) && "font-semibold",
-                    day.isSelected && "text-white",
-                    !day.isSelected &&
-                      day.isCurrentMonth &&
-                      !day.isToday &&
-                      "text-gray-900",
-                    !day.isSelected &&
-                      !day.isCurrentMonth &&
-                      !day.isToday &&
-                      "text-gray-400",
-                    day.isToday && !day.isSelected && "text-indigo-600",
-                    dayIdx === 0 && "rounded-tl-lg",
-                    dayIdx === 6 && "rounded-tr-lg",
-                    dayIdx === days.length - 7 && "rounded-bl-lg",
-                    dayIdx === days.length - 1 && "rounded-br-lg"
-                  )}
-                >
-                  <time
-                    dateTime={day.date}
-                    className={classNames(
-                      "mx-auto flex h-7 w-7 items-center justify-center rounded-full",
-                      day.isSelected && day.isToday && "bg-indigo-600",
-                      day.isSelected && !day.isToday && "bg-gray-900"
-                    )}
-                  >
-                    {day.date.split("-").pop().replace(/^0/, "")}
-                  </time>
-                </button>
-              ))}
-            </div>
-            <button
-              type="button"
-              className="mt-8 w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Add event
-            </button>
           </div>
         </div>
 
