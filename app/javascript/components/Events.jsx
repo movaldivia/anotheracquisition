@@ -12,6 +12,30 @@ function csrfToken() {
 export default function Events() {
   const [events, setEvents] = useState([]);
 
+  const joinEvent = async () => {
+    try {
+      const bearerToken = localStorage.getItem("bearerToken");
+
+      const response = await fetch("http://localhost:3000/api/events/join", {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": csrfToken(),
+          Authorization: bearerToken,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: 8 }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      console.log("success");
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  };
+
   useEffect(() => {
     try {
       const bearerToken = localStorage.getItem("bearerToken");
@@ -132,6 +156,14 @@ export default function Events() {
                   </p>
                   {/* <p className="text-gray-600">{post.author.role}</p> */}
                 </div>
+              </div>
+              <div className="mt-8">
+                <button
+                  onClick={joinEvent}
+                  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Join
+                </button>
               </div>
             </article>
           ))}

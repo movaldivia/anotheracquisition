@@ -1,4 +1,5 @@
 class EventsController < ApplicationController
+  before_action :authenticate_user!
     def index
         events = Event.all
         render json: events
@@ -14,6 +15,12 @@ class EventsController < ApplicationController
         head :no_content
       end
 
+      def join_event
+        event = Event.find(params[:id])
+        current_user.joined_events << event
+        render json: event, status: :created
+      end
+
       def show
         render json: Event.find(params[:id])
       end
@@ -27,6 +34,6 @@ class EventsController < ApplicationController
       private
     
       def event_params
-        params.permit(:name, :description, :organizer, :location, :datetime)
+        params.permit(:name, :description, :organizer, :location, :datetime, :id)
       end
 end

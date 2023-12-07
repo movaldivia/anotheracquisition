@@ -4,6 +4,15 @@ Rails.application.routes.draw do
   get '/app/*params', to: 'homepage#index'
   post '/api/events', to: 'events#create'
   get '/api/events', to: 'events#index'
+
+  post '/api/events/join', to: 'events#join_event'
+
+  # Get events joined by a user
+  get '/users/:user_id/events/joined', to: 'events#joined', as: 'user_events_joined'
+
+  # Get events created by a user
+  # get '/users/:user_id/events/created', to: 'events#created', as: 'user_events_created'
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
