@@ -15,10 +15,16 @@ class EventsController < ApplicationController
         head :no_content
       end
 
-      def join_event
+      def join
         event = Event.find(params[:id])
         current_user.joined_events << event
         render json: event, status: :created
+      end
+
+      def unjoin
+        event = Event.find(params[:id])
+        current_user.joined_events.destroy(event)
+        head :no_content
       end
 
       def show

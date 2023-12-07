@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   get '/api/events', to: 'events#index'
 
   post '/api/events/join', to: 'events#join_event'
-
+  post '/api/events/unjoin', to: 'events#unjoin_event'
   # Get events joined by a user
   get '/users/:user_id/events/joined', to: 'events#joined', as: 'user_events_joined'
 
