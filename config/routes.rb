@@ -4,9 +4,12 @@ Rails.application.routes.draw do
   get '/app/*params', to: 'homepage#index'
   post '/api/events', to: 'events#create'
   get '/api/events', to: 'events#index'
+  get '/api/events/:id', to: 'events#show'
+  put '/api/events', to: 'events#update'
+  delete '/api/events', to: 'events#destroy'
 
-  post '/api/events/join', to: 'events#join_event'
-  post '/api/events/unjoin', to: 'events#unjoin_event'
+  post '/api/events/join', to: 'events#join'
+  post '/api/events/unjoin', to: 'events#unjoin'
   # Get events joined by a user
   get '/users/:user_id/events/joined', to: 'events#joined', as: 'user_events_joined'
 

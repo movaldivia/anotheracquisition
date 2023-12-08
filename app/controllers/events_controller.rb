@@ -1,8 +1,15 @@
 class EventsController < ApplicationController
   before_action :authenticate_user!
-    def index
-        events = Event.all
-        render json: events
+      def index
+          status = params[:status]
+
+          if status.present? and status == 'JOINED'
+            events = current_user.joined_events
+          end
+
+          events = Event.all
+          render json: events
+        
       end
 
       def create
@@ -40,6 +47,6 @@ class EventsController < ApplicationController
       private
     
       def event_params
-        params.permit(:name, :description, :organizer, :location, :datetime, :id)
+        params.permit(:name, :description, :organizer, :location, :datetime, :id, :status)
       end
 end
