@@ -1,12 +1,39 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import axios from "axios";
+import { clearCookiesOnLogout } from "../api/auth";
+import Cookies from "js-cookie";
+import { csrfToken } from "../utils/csrfToken";
 
 export default function NavBar() {
+  const signOut = () => {
+    const {
+      "access-token": accessToken,
+      "token-type": tokenType,
+      client,
+      expiry,
+      uid,
+      authorization,
+    } = JSON.parse(Cookies.get("cw_d_session_info"));
+
+    axios
+      .delete("http://localhost:3000/auth/sign_out", {
+        headers: {
+          "X-CSRF-Token": csrfToken(),
+          "access-token": accessToken,
+          "token-type": tokenType,
+          client,
+          expiry,
+          uid,
+          authorization,
+        },
+      })
+      .then((response) => {
+        clearCookiesOnLogout();
+      });
+  };
+
   return (
     <Disclosure as="nav" className="bg-white shadow">
       {({ open }) => (
@@ -27,7 +54,10 @@ export default function NavBar() {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start"></div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <span className="inline-flex items-center  px-1 pt-1 text-sm font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
+                <span
+                  onClick={signOut}
+                  className="inline-flex items-center  px-1 pt-1 text-sm font-medium text-gray-600 hover:text-gray-900 cursor-pointer"
+                >
                   Sign out
                 </span>
                 {/* Profile dropdown */}

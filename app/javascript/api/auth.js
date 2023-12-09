@@ -36,3 +36,12 @@ export const signUp = async (creds) => {
   }
   return null;
 };
+
+export const clearBrowserSessionCookies = () => {
+  Cookies.remove("cw_d_session_info");
+};
+
+export const clearCookiesOnLogout = () => {
+  clearBrowserSessionCookies();
+  window.location = "/";
+};
