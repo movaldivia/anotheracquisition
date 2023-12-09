@@ -65,7 +65,7 @@ function Alert({ show, setShow, title, description }) {
   );
 }
 
-export default function Events() {
+export default function ManageEvents() {
   const [notJoinedEvents, setNotJoinedEvents] = useState([]);
   const [joinedEvents, setJoinedEvents] = useState([]);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -278,7 +278,7 @@ export default function Events() {
 
   return (
     <>
-      <NavBar location={"/app/events"} />
+      <NavBar location={"/app/events/manage"} />
       <div className="bg-white py-24 sm:py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:mx-0">
@@ -301,26 +301,20 @@ export default function Events() {
               description={"Remember to remove it from your calendar."}
             />
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Events
+              Admin Events
             </h2>
             <p className="mt-2 text-lg leading-8 text-gray-600">
-              Find and organize the best events near your neighborhood
+              Edit and delete the events that you manage
             </p>
           </div>
-          {/* <div className="flex mt-8">
+          <div className="flex mt-8">
             <Link
               to="/app/events/new"
               className="mr-2 rounded-md border-2 border-indigo-600 bg-indigo-600 px-8 md:px-8 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 hover:border-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Create Event
             </Link>
-            <Link
-              to="/app/events/manage"
-              className=" rounded-md border-2 border-indigo-600 bg-white px-8 md:px-8 py-3 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-gray-50 hover:border-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Manage Events
-            </Link>
-          </div> */}
+          </div>
           {joinedEvents.length > 0 && (
             <div>
               <div className="mt-10 sm:mt-16 text-xl pb-2 font-bold tracking-tight text-gray-900 sm:text-2xl">
@@ -376,7 +370,16 @@ export default function Events() {
                           onClick={() => unjoinEvent(event.id)}
                           className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
-                          Unjoin
+                          Edit
+                        </button>
+                      </div>
+
+                      <div className="col-span-3">
+                        <button
+                          onClick={() => unjoinEvent(event.id)}
+                          className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                        >
+                          Delete
                         </button>
                       </div>
                     </div>
@@ -441,6 +444,15 @@ export default function Events() {
                           className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                           Join
+                        </button>
+                      </div>
+
+                      <div className="col-span-3">
+                        <button
+                          onClick={() => unjoinEvent(event.id)}
+                          className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                        >
+                          Delete
                         </button>
                       </div>
                     </div>
