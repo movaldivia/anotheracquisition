@@ -1,12 +1,8 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
-
-function csrfToken() {
-  const meta = document.querySelector("meta[name=csrf-token]");
-  const token = meta && meta.getAttribute("content");
-
-  return token ?? false;
-}
+import axios from "axios";
+import { csrfToken } from "../utils/csrfToken";
+import Cookies from "js-cookie";
 
 export default function NewEvent() {
   const navigate = useNavigate();
@@ -14,29 +10,36 @@ export default function NewEvent() {
     e.preventDefault();
 
     try {
-      const bearerToken = localStorage.getItem("bearerToken");
+      const {
+        "access-token": accessToken,
+        "token-type": tokenType,
+        client,
+        expiry,
+        uid,
+        authorization,
+      } = JSON.parse(Cookies.get("cw_d_session_info"));
 
-      const response = await fetch("http://localhost:3000/api/events/", {
-        method: "POST",
+      await axios({
+        method: "post",
         headers: {
           "X-CSRF-Token": csrfToken(),
-          Authorization: bearerToken,
-          "Content-Type": "application/json",
+          "access-token": accessToken,
+          "token-type": tokenType,
+          client,
+          expiry,
+          uid,
+          authorization,
         },
-        body: JSON.stringify({
+        data: {
           name: "An event",
           description: "description",
           organizer: "organizer",
           location: "location",
           datetime: new Date().toLocaleString(),
-        }),
+        },
+        url: "http://localhost:3000/api/events/",
       });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      navigate("/app/events");
+      navigate("/app/events?status=success");
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
     }

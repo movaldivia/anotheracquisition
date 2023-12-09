@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import { Transition } from "@headlessui/react";
@@ -72,6 +72,13 @@ function EventCreatedSuccessfully({ show, setShow }) {
 export default function Events() {
   const [events, setEvents] = useState([]);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("status") && searchParams.get("status") == "success") {
+      setShowSuccessMessage(true);
+    }
+  }, []);
 
   const joinEvent = async () => {
     try {
