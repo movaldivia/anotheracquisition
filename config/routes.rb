@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get '/app/*params', to: 'homepage#index'
   post '/api/events', to: 'events#create'
   get '/api/events', to: 'events#index'
+  get '/api/events/owner', to: 'events#index_from_owner'
   get '/api/events/:id', to: 'events#show'
   put '/api/events', to: 'events#update'
   delete '/api/events', to: 'events#destroy'

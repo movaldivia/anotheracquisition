@@ -12,9 +12,12 @@ class EventsController < ApplicationController
           else
             events = Event.all
           end
-          
           render json: events
-        
+      end
+
+      def index_from_owner
+        events = Event.where(owner_id: current_user.id)
+        render json: events
       end
 
       def create
@@ -52,6 +55,6 @@ class EventsController < ApplicationController
       private
     
       def event_params
-        params.permit(:name, :description, :organizer, :location, :datetime, :id, :status)
+        params.require(:event).permit(:name, :description, :datetime, :location).merge(owner_id: current_user.id)
       end
 end
