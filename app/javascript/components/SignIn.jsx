@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { csrfToken } from "../utils/csrfToken";
+import axios from "axios";
+import { setAuthCredentials } from "../api/auth";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -12,25 +13,19 @@ export default function SignIn() {
     formData.append("password", form.get("password"));
 
     try {
-      const response = await fetch("http://localhost:3000/auth/sign_in", {
-        method: "POST",
-        headers: {
-          "X-CSRF-Token": csrfToken(),
-        },
-        body: formData,
+      const response = await axios({
+        method: "post",
+        url: "http://localhost:3000/auth/sign_in",
+        data: formData,
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error("Network response was not ok");
       }
 
       setAuthCredentials(response);
 
-      console.log({ response });
-
-      const bearerToken = response.headers.get("Authorization");
-
-      localStorage.setItem("bearerToken", bearerToken);
       navigate("/app/events");
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
