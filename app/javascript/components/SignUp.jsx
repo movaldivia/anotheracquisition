@@ -1,50 +1,57 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-// utils/csrf.js
-function csrfToken() {
-  const meta = document.querySelector("meta[name=csrf-token]");
-  const token = meta && meta.getAttribute("content");
-
-  return token ?? false;
-}
-
-export { csrfToken };
-
-const handleSubmit = async (e) => {
-  const navigate = useNavigate();
-  e.preventDefault();
-
-  const formData = new FormData();
-  formData.append("email", "movaldivia14@uc.cl");
-  formData.append("password", "wena1233");
-  formData.append("password_confirmation", "wena1233");
-  formData.append("name", "Mauricio14");
-
-  try {
-    const response = await fetch("http://localhost:3000/auth", {
-      method: "POST",
-      headers: {
-        "X-CSRF-Token": csrfToken(),
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-
-    const bearerToken = response.headers.get("Authorization");
-
-    localStorage.setItem("bearerToken", bearerToken);
-
-    navigate("/app/events");
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-  }
-};
+import { setAuthCredentials } from "../api/auth";
+import { csrfToken } from "../utils/csrfToken";
+import axios from "axios";
 
 export default function SignUp() {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (form) => {
+    const formData = new FormData();
+    formData.append("email", form.get("email"));
+    formData.append("password", form.get("password"));
+    formData.append("password_confirmation", form.get("password"));
+    formData.append("name", form.get("name"));
+
+    try {
+      const response = await axios({
+        method: "post",
+        url: "http://localhost:3000/auth",
+        data: formData,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      console.log({ response });
+
+      // const response = await fetch("http://localhost:3000/auth", {
+      //   method: "POST",
+      //   for
+      //   headers: {
+      //     "X-CSRF-Token": csrfToken(),
+      //   },
+      //   body: formData,
+      // });
+
+      // if (!response.ok) {
+      //   throw new Error("Network response was not ok");
+      // }
+
+      setAuthCredentials(response);
+
+      // const bearerToken = response.headers.get("Authorization");
+
+      // localStorage.setItem("access-token", bearerToken);
+      // localStorage.setItem("client", bearerToken);
+      // localStorage.setItem("uid", bearerToken);
+      // localStorage.setItem("expiry", bearerToken);
+      // localStorage.setItem("token-type", bearerToken);
+
+      navigate("/app/events");
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  };
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -55,13 +62,13 @@ export default function SignUp() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" action={handleSubmit}>
             <div>
               <label
                 htmlFor="name"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Name
+                Personal / organization name
               </label>
               <div className="mt-2">
                 <input

@@ -1,25 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useNavigate, redirect } from "react-router-dom";
-
-// utils/csrf.js
-function csrfToken() {
-  const meta = document.querySelector("meta[name=csrf-token]");
-  const token = meta && meta.getAttribute("content");
-
-  return token ?? false;
-}
-
-export { csrfToken };
+import { useNavigate } from "react-router-dom";
+import { csrfToken } from "../utils/csrfToken";
 
 export default function SignIn() {
   const navigate = useNavigate();
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
+  const handleSubmit = async (form) => {
     const formData = new FormData();
-    formData.append("email", "movaldivia14@uc.cl");
-    formData.append("password", "wena1233");
+    formData.append("email", form.get("email"));
+    formData.append("password", form.get("password"));
 
     try {
       const response = await fetch("http://localhost:3000/auth/sign_in", {
@@ -33,6 +23,10 @@ export default function SignIn() {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+
+      setAuthCredentials(response);
+
+      console.log({ response });
 
       const bearerToken = response.headers.get("Authorization");
 
@@ -52,7 +46,7 @@ export default function SignIn() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" action={handleSubmit}>
             <div>
               <label
                 htmlFor="email"
