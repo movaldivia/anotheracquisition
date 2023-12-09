@@ -10,7 +10,7 @@ import { csrfToken } from "../utils/csrfToken";
 import Cookies from "js-cookie";
 import axios from "axios";
 
-function EventCreatedSuccessfully({ show, setShow }) {
+function Alert({ show, setShow, title, description }) {
   return (
     <>
       {/* Global notification live region, render this permanently at the end of the document */}
@@ -40,12 +40,8 @@ function EventCreatedSuccessfully({ show, setShow }) {
                     />
                   </div>
                   <div className="ml-3 w-0 flex-1 pt-0.5">
-                    <p className="text-sm font-medium text-gray-900">
-                      Event created successfully!
-                    </p>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Anyone can join your event.
-                    </p>
+                    <p className="text-sm font-medium text-gray-900">{title}</p>
+                    <p className="mt-1 text-sm text-gray-500">{description}</p>
                   </div>
                   <div className="ml-4 flex flex-shrink-0">
                     <button
@@ -70,8 +66,12 @@ function EventCreatedSuccessfully({ show, setShow }) {
 }
 
 export default function Events() {
-  const [events, setEvents] = useState([]);
+  const [notJoinedEvents, setNotJoinedEvents] = useState([]);
+  const [joinedEvents, setJoinedEvents] = useState([]);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showSuccessJoinMessage, setShowSuccessJoinMessage] = useState(false);
+  const [showSuccessUnjoinMessage, setShowSuccessUnjoinMessage] =
+    useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -80,25 +80,133 @@ export default function Events() {
     }
   }, []);
 
-  const joinEvent = async () => {
+  const unjoinEvent = async (id) => {
     try {
-      const bearerToken = localStorage.getItem("bearerToken");
+      const {
+        "access-token": accessToken,
+        "token-type": tokenType,
+        client,
+        expiry,
+        uid,
+        authorization,
+      } = JSON.parse(Cookies.get("cw_d_session_info"));
 
-      const response = await fetch("http://localhost:3000/api/events/join", {
-        method: "POST",
+      await axios({
+        url: "http://localhost:3000/api/events/unjoin",
+        method: "post",
         headers: {
           "X-CSRF-Token": csrfToken(),
-          Authorization: bearerToken,
-          "Content-Type": "application/json",
+          "access-token": accessToken,
+          "token-type": tokenType,
+          client,
+          expiry,
+          uid,
+          authorization,
         },
-        body: JSON.stringify({ id: 8 }),
+        data: { id },
       });
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+      axios
+        .get("http://localhost:3000/api/events?status=JOINED", {
+          headers: {
+            "X-CSRF-Token": csrfToken(),
+            "access-token": accessToken,
+            "token-type": tokenType,
+            client,
+            expiry,
+            uid,
+            authorization,
+          },
+        })
+        .then((response) => {
+          console.log({ events: response.data });
+          setJoinedEvents(response.data);
+        });
 
-      console.log("success");
+      axios
+        .get("http://localhost:3000/api/events?status=NOT_JOINED", {
+          headers: {
+            "X-CSRF-Token": csrfToken(),
+            "access-token": accessToken,
+            "token-type": tokenType,
+            client,
+            expiry,
+            uid,
+            authorization,
+          },
+        })
+        .then((response) => {
+          console.log({ events: response.data });
+          setNotJoinedEvents(response.data);
+        });
+
+      setShowSuccessUnjoinMessage(true);
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  };
+
+  const joinEvent = async (id) => {
+    try {
+      const {
+        "access-token": accessToken,
+        "token-type": tokenType,
+        client,
+        expiry,
+        uid,
+        authorization,
+      } = JSON.parse(Cookies.get("cw_d_session_info"));
+
+      await axios({
+        url: "http://localhost:3000/api/events/join",
+        method: "post",
+        headers: {
+          "X-CSRF-Token": csrfToken(),
+          "access-token": accessToken,
+          "token-type": tokenType,
+          client,
+          expiry,
+          uid,
+          authorization,
+        },
+        data: { id },
+      });
+
+      axios
+        .get("http://localhost:3000/api/events?status=JOINED", {
+          headers: {
+            "X-CSRF-Token": csrfToken(),
+            "access-token": accessToken,
+            "token-type": tokenType,
+            client,
+            expiry,
+            uid,
+            authorization,
+          },
+        })
+        .then((response) => {
+          console.log({ events: response.data });
+          setJoinedEvents(response.data);
+        });
+
+      axios
+        .get("http://localhost:3000/api/events?status=NOT_JOINED", {
+          headers: {
+            "X-CSRF-Token": csrfToken(),
+            "access-token": accessToken,
+            "token-type": tokenType,
+            client,
+            expiry,
+            uid,
+            authorization,
+          },
+        })
+        .then((response) => {
+          console.log({ events: response.data });
+          setNotJoinedEvents(response.data);
+        });
+
+      setShowSuccessJoinMessage(true);
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
     }
@@ -116,7 +224,7 @@ export default function Events() {
       } = JSON.parse(Cookies.get("cw_d_session_info"));
 
       axios
-        .get("http://localhost:3000/api/events", {
+        .get("http://localhost:3000/api/events?status=JOINED", {
           headers: {
             "X-CSRF-Token": csrfToken(),
             "access-token": accessToken,
@@ -129,15 +237,44 @@ export default function Events() {
         })
         .then((response) => {
           console.log({ events: response.data });
-          setEvents(response.data);
+          setJoinedEvents(response.data);
         });
-
-      navigate("/app/events");
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
     }
   }, []);
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      const {
+        "access-token": accessToken,
+        "token-type": tokenType,
+        client,
+        expiry,
+        uid,
+        authorization,
+      } = JSON.parse(Cookies.get("cw_d_session_info"));
+
+      axios
+        .get("http://localhost:3000/api/events?status=NOT_JOINED", {
+          headers: {
+            "X-CSRF-Token": csrfToken(),
+            "access-token": accessToken,
+            "token-type": tokenType,
+            client,
+            expiry,
+            uid,
+            authorization,
+          },
+        })
+        .then((response) => {
+          console.log({ events: response.data });
+          setNotJoinedEvents(response.data);
+        });
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  }, []);
 
   return (
     <>
@@ -145,9 +282,23 @@ export default function Events() {
       <div className="bg-white py-24 sm:py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:mx-0">
-            <EventCreatedSuccessfully
+            <Alert
               show={showSuccessMessage}
               setShow={setShowSuccessMessage}
+              title={"Event created successfully!"}
+              description={"Anyone can join your event."}
+            />
+            <Alert
+              show={showSuccessJoinMessage}
+              setShow={setShowSuccessJoinMessage}
+              title={"Joined to the event successfully!"}
+              description={"Remember to put it on your calendar."}
+            />
+            <Alert
+              show={showSuccessUnjoinMessage}
+              setShow={setShowSuccessUnjoinMessage}
+              title={"Unjoined the event successfully!"}
+              description={"Remember to remove it from your calendar."}
             />
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
               Events
@@ -164,122 +315,130 @@ export default function Events() {
               Create Event
             </Link>
           </div>
-          <div className="mt-10 sm:mt-16 text-xl pb-2 font-bold tracking-tight text-gray-900 sm:text-2xl">
-            My next events
-          </div>
-          <div className="mx-auto pt-10 grid max-w-2xl grid-cols-1 gap-x-12 gap-y-32 border-t border-gray-200  lg:mx-0 lg:max-w-none lg:grid-cols-3">
-            {events.map((event) => (
-              <article
-                key={event.id}
-                className="flex max-w-xl flex-col items-start justify-between"
-              >
-                <div className="flex items-center gap-x-4 text-xs">
-                  <time dateTime={event.datetime} className="text-gray-500">
-                    {event.datetime}
-                  </time>
-                  {/* <a
+          {joinedEvents.length > 0 && (
+            <div>
+              <div className="mt-10 sm:mt-16 text-xl pb-2 font-bold tracking-tight text-gray-900 sm:text-2xl">
+                My next events
+              </div>
+              <div className="mx-auto pt-10 grid max-w-2xl grid-cols-1 gap-x-12 gap-y-32 border-t border-gray-200  lg:mx-0 lg:max-w-none lg:grid-cols-3">
+                {joinedEvents.map((event) => (
+                  <article
+                    key={event.id}
+                    className="flex max-w-xl flex-col items-start justify-between"
+                  >
+                    <div className="flex items-center gap-x-4 text-xs">
+                      <time dateTime={event.datetime} className="text-gray-500">
+                        {event.datetime}
+                      </time>
+                      {/* <a
                   href={post.category.href}
                   className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
                 >
                   {post.category.title}
                 </a> */}
-                </div>
-                <div className="group relative">
-                  <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
-                    <a href="#">
-                      <span className="absolute inset-0" />
-                      {event.name}
-                    </a>
-                  </h3>
-                  <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
-                    {event.description}
-                  </p>
-                </div>
-                <div className="relative mt-8 flex items-center gap-x-4">
-                  {/* <img
+                    </div>
+                    <div className="group relative">
+                      <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
+                        <a href="#">
+                          <span className="absolute inset-0" />
+                          {event.name}
+                        </a>
+                      </h3>
+                      <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
+                        {event.description}
+                      </p>
+                    </div>
+                    <div className="relative mt-8 flex items-center gap-x-4">
+                      {/* <img
                   src={post.author.imageUrl}
                   alt=""
                   className="h-10 w-10 rounded-full bg-gray-50"
                 /> */}
-                  <div className="text-sm leading-6">
-                    <p className="font-semibold text-gray-900">
-                      <a href="#">
-                        <span className="absolute inset-0" />
-                        {event.organizer}
-                      </a>
-                    </p>
-                    {/* <p className="text-gray-600">{post.author.role}</p> */}
-                  </div>
-                </div>
-                <div className="mt-8">
-                  <button
-                    onClick={joinEvent}
-                    className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      <div className="text-sm leading-6">
+                        <p className="font-semibold text-gray-900">
+                          <a href="#">
+                            <span className="absolute inset-0" />
+                            {event.organizer}
+                          </a>
+                        </p>
+                        {/* <p className="text-gray-600">{post.author.role}</p> */}
+                      </div>
+                    </div>
+                    <div className="mt-8">
+                      <button
+                        onClick={() => unjoinEvent(event.id)}
+                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      >
+                        Unjoin
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
+          {notJoinedEvents.length > 0 && (
+            <div>
+              <div className="mt-10 sm:mt-16 text-xl pb-2 font-bold tracking-tight text-gray-900 sm:text-2xl">
+                New events
+              </div>
+              <div className="mx-auto pt-10 grid max-w-2xl grid-cols-1 gap-x-12 gap-y-32 border-t border-gray-200  lg:mx-0 lg:max-w-none lg:grid-cols-3">
+                {notJoinedEvents.map((event) => (
+                  <article
+                    key={event.id}
+                    className="flex max-w-xl flex-col items-start justify-between"
                   >
-                    Unjoin
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-          <div className="mt-10 sm:mt-16 text-xl pb-2 font-bold tracking-tight text-gray-900 sm:text-2xl">
-            New events
-          </div>
-          <div className="mx-auto pt-10 grid max-w-2xl grid-cols-1 gap-x-12 gap-y-32 border-t border-gray-200  lg:mx-0 lg:max-w-none lg:grid-cols-3">
-            {events.map((event) => (
-              <article
-                key={event.id}
-                className="flex max-w-xl flex-col items-start justify-between"
-              >
-                <div className="flex items-center gap-x-4 text-xs">
-                  <time dateTime={event.datetime} className="text-gray-500">
-                    {event.datetime}
-                  </time>
-                  {/* <a
+                    <div className="flex items-center gap-x-4 text-xs">
+                      <time dateTime={event.datetime} className="text-gray-500">
+                        {event.datetime}
+                      </time>
+                      {/* <a
                   href={post.category.href}
                   className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
                 >
                   {post.category.title}
                 </a> */}
-                </div>
-                <div className="group relative">
-                  <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
-                    <a href="#">
-                      <span className="absolute inset-0" />
-                      {event.name}
-                    </a>
-                  </h3>
-                  <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
-                    {event.description}
-                  </p>
-                </div>
-                <div className="relative mt-8 flex items-center gap-x-4">
-                  {/* <img
+                    </div>
+                    <div className="group relative">
+                      <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
+                        <a href="#">
+                          <span className="absolute inset-0" />
+                          {event.name}
+                        </a>
+                      </h3>
+                      <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
+                        {event.description}
+                      </p>
+                    </div>
+                    <div className="relative mt-8 flex items-center gap-x-4">
+                      {/* <img
                   src={post.author.imageUrl}
                   alt=""
                   className="h-10 w-10 rounded-full bg-gray-50"
                 /> */}
-                  <div className="text-sm leading-6">
-                    <p className="font-semibold text-gray-900">
-                      <a href="#">
-                        <span className="absolute inset-0" />
-                        {event.organizer}
-                      </a>
-                    </p>
-                    {/* <p className="text-gray-600">{post.author.role}</p> */}
-                  </div>
-                </div>
-                <div className="mt-8">
-                  <button
-                    onClick={joinEvent}
-                    className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    Join
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
+                      <div className="text-sm leading-6">
+                        <p className="font-semibold text-gray-900">
+                          <a href="#">
+                            <span className="absolute inset-0" />
+                            {event.organizer}
+                          </a>
+                        </p>
+                        {/* <p className="text-gray-600">{post.author.role}</p> */}
+                      </div>
+                    </div>
+                    <div className="mt-8">
+                      <button
+                        onClick={() => joinEvent(event.id)}
+                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      >
+                        Join
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

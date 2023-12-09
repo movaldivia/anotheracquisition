@@ -3,11 +3,16 @@ class EventsController < ApplicationController
       def index
           status = params[:status]
 
+          events = nil
+
           if status.present? and status == 'JOINED'
             events = current_user.joined_events
+          elsif status.present? and status == 'NOT_JOINED'
+            events = Event.where.not(id: current_user.joined_event_ids)
+          else
+            events = Event.all
           end
-
-          events = Event.all
+          
           render json: events
         
       end
