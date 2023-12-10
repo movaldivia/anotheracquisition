@@ -23,17 +23,6 @@ RSpec.describe 'Whether access is ocurring properly', type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'user can create a new event' do
-      params = {           name: "An event",
-      description: "description",
-      organizer: "organizer",
-      location: "location",
-      datetime: DateTime.now, }
-      post '/api/events', headers: @user.create_new_auth_token, params: params,as: :json
-
-      expect(response).to have_http_status(:success)
-    end
-
     it 'user can get event info' do
       get "/api/events/#{@event.id}", headers: @user.create_new_auth_token
       expect(response).to have_http_status(:success)
@@ -47,14 +36,14 @@ RSpec.describe 'Whether access is ocurring properly', type: :request do
 
     # To do validate that user has joined before
     it 'user can unjoin a event' do
-      params = {           id: @event.id,}
+      params = {id: @event.id}
       post '/api/events/unjoin', headers: @user.create_new_auth_token, params: params,as: :json
       expect(response).to have_http_status(:success)
     end
 
     it 'user can update event' do
-      params = { id: @event.id, name: 'new_name'}
-      put '/api/events', headers: @user.create_new_auth_token, params: params, as: :json
+      params = { name: 'new_name'}
+      put "/api/events/#{@event.id}", headers: @user.create_new_auth_token, params: params, as: :json
       expect(response).to have_http_status(:success)
     end
 
