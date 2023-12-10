@@ -11,6 +11,7 @@ export default (
   <Router>
     <Routes>
       <Route path="/app/events/new" element={<NewEvent />} />
+      <Route path="/app/events/edit/:id" element={<NewEvent />} />
       <Route path="/app/events/manage" element={<ManageEvents />} />
       <Route path="/app/events" element={<Events />} />
       <Route path="/app/signup" element={<SignUp />} />

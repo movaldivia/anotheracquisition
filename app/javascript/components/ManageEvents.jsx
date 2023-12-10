@@ -386,12 +386,11 @@ export default function ManageEvents() {
                     </div>
                     <div className="mt-8 grid grid-cols-12 gap-x-2">
                       <div className="col-span-3">
-                        <button
-                          onClick={() => unjoinEvent(event.id)}
-                          className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        >
-                          Edit
-                        </button>
+                        <Link to={`/app/events/edit/${event.id}`}>
+                          <button className="rounded-md bg-indigo-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                            Edit
+                          </button>
+                        </Link>
                       </div>
 
                       <div className="col-span-3">

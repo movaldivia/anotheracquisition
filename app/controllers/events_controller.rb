@@ -43,7 +43,8 @@ class EventsController < ApplicationController
       end
 
       def show
-        render json: Event.find(params[:id])
+        event =  Event.find(params[:id])
+        render json: EventSerializer.new(event).serializable_hash
       end
     
       def update

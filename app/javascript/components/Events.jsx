@@ -65,6 +65,113 @@ function Alert({ show, setShow, title, description }) {
   );
 }
 
+function Event({ eventData, actionFunction, actionName }) {
+  const options = {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+    timeZone: "UTC",
+  };
+  const event = eventData.attributes;
+  const id = eventData.id;
+  return (
+    <article
+      key={id}
+      className="flex max-w-xl flex-col items-start justify-between border border-gray-100 shadow-lg rounded-2xl rounded-b-none"
+    >
+      <div className="relative w-full">
+        <img
+          src={event.image_url}
+          alt=""
+          className="aspect-[16/9] w-full rounded-2xl rounded-b-none bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
+        />
+        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
+      </div>
+      <div className="px-5">
+        <div className="flex justify-between items-center gap-x-2 text-xs mt-4 w-full ">
+          <div className="flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-5 h-5"
+            >
+              <path d="M12.75 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM7.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM8.25 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM9.75 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM10.5 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM12.75 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM14.25 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 13.5a.75.75 0 100-1.5.75.75 0 000 1.5z" />
+              <path
+                fillRule="evenodd"
+                d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <div className="text-gray-500 ml-1">
+              {" "}
+              {new Intl.DateTimeFormat("en-GB", options).format(
+                new Date(event.datetime)
+              )}
+            </div>
+          </div>
+
+          <div className="text-xs text-gray-500 flex pr-1 items-center">
+            <div className="mr-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div>{event.location}</div>
+          </div>
+        </div>
+        <div className="group relative">
+          <h3 className="mt-4 capitalize text-2xl font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
+            <a href="#">
+              <span className="absolute inset-0" />
+              {event.name}
+            </a>
+          </h3>
+          <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
+            {event.description}
+          </p>
+          {/* <div className="mt-2 line-clamp-3 text-sm leading-6 text-gray-600 flex">
+          <a
+            // href={post.category.href}
+            className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
+          >
+            {event.organizer}
+          </a>
+        </div> */}
+        </div>
+        <div className="mt-8 grid grid-cols-12 gap-x-2 w-full">
+          <div className="col-span-12">
+            <button
+              onClick={() => actionFunction(id)}
+              className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              {actionName}
+            </button>
+          </div>
+        </div>
+        <div className="relative mt-8 flex items-center gap-x-4">
+          {/* <img
+          src={event.image_url}
+          alt=""
+          className="h-10 w-10 rounded-full bg-gray-50"
+        /> */}
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default function Events() {
   const [notJoinedEvents, setNotJoinedEvents] = useState([]);
   const [joinedEvents, setJoinedEvents] = useState([]);
@@ -79,15 +186,6 @@ export default function Events() {
       setShowSuccessMessage(true);
     }
   }, []);
-
-  const options = {
-    hour: "2-digit",
-    minute: "2-digit",
-    day: "2-digit",
-    month: "2-digit",
-    year: "2-digit",
-    timeZone: "UTC",
-  };
 
   const unjoinEvent = async (id) => {
     try {
@@ -192,7 +290,7 @@ export default function Events() {
           },
         })
         .then((response) => {
-          setJoinedEvents(response.data);
+          setJoinedEvents(response.data.data);
         });
 
       axios
@@ -208,7 +306,7 @@ export default function Events() {
           },
         })
         .then((response) => {
-          setNotJoinedEvents(response.data);
+          setNotJoinedEvents(response.data.data);
         });
 
       setShowSuccessJoinMessage(true);
@@ -317,83 +415,12 @@ export default function Events() {
               </div>
               <div className="mx-auto pt-10 grid max-w-2xl grid-cols-1 gap-x-12 gap-y-32 border-t border-gray-200  lg:mx-0 lg:max-w-none lg:grid-cols-3">
                 {joinedEvents.map((eventData) => {
-                  const id = eventData.id;
-                  const event = eventData.attributes;
-                  const date1 = new Date(event.datetime);
                   return (
-                    <article
-                      key={id}
-                      className="flex max-w-xl flex-col items-start justify-between"
-                    >
-                      <div className="relative w-full">
-                        <img
-                          src={event.image_url}
-                          alt=""
-                          className="aspect-[16/9] w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
-                        />
-                        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
-                      </div>
-                      <div className="flex items-center gap-x-4 text-xs">
-                        {/* <time
-                          dateTime={event.datetime}
-                          className="text-gray-500"
-                        >
-                          {event.datetime}
-                        </time> */}
-                        <span className="text-gray-500">
-                          {" "}
-                          {new Intl.DateTimeFormat("en-GB", options).format(
-                            date1
-                          )}
-                        </span>
-                        <a
-                          // href={post.category.href}
-                          className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
-                        >
-                          {event.name}
-                        </a>
-                      </div>
-                      <div className="group relative">
-                        <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
-                          <a href="#">
-                            <span className="absolute inset-0" />
-                            {event.name}
-                          </a>
-                        </h3>
-                        <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
-                          {event.description}
-                        </p>
-                      </div>
-                      <div className="relative mt-8 flex items-center gap-x-4">
-                        {/* <img
-                  src={post.author.imageUrl}
-                  alt=""
-                  className="h-10 w-10 rounded-full bg-gray-50"
-                /> */}
-                        <div className="text-sm leading-6">
-                          <p className="font-semibold text-gray-900">
-                            <a href="#">
-                              <span className="absolute inset-0" />
-                              Organizer{" "}
-                              <span className="capitalize">
-                                {event.organizer}
-                              </span>
-                            </a>
-                          </p>
-                          {/* <p className="text-gray-600">{post.author.role}</p> */}
-                        </div>
-                      </div>
-                      <div className="mt-8 grid grid-cols-12 gap-x-2">
-                        <div className="col-span-3">
-                          <button
-                            onClick={() => unjoinEvent(id)}
-                            className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                          >
-                            Unjoin
-                          </button>
-                        </div>
-                      </div>
-                    </article>
+                    <Event
+                      eventData={eventData}
+                      actionName={"View Event"}
+                      actionFunction={unjoinEvent}
+                    />
                   );
                 })}
               </div>
@@ -406,74 +433,12 @@ export default function Events() {
               </div>
               <div className="mx-auto pt-10 grid max-w-2xl grid-cols-1 gap-x-12 gap-y-32 border-t border-gray-200  lg:mx-0 lg:max-w-none lg:grid-cols-3">
                 {notJoinedEvents.map((eventData) => {
-                  const event = eventData.attributes;
-                  const id = eventData.id;
-
                   return (
-                    <article
-                      key={id}
-                      className="flex max-w-xl flex-col items-start justify-between"
-                    >
-                      <div className="relative w-full">
-                        <img
-                          src={event.image_url}
-                          alt=""
-                          className="aspect-[16/9] w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
-                        />
-                        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
-                      </div>
-                      <div className="flex items-center gap-x-4 text-xs mt-8">
-                        <time
-                          dateTime={event.datetime}
-                          className="text-gray-500"
-                        >
-                          {event.datetime}
-                        </time>
-                        <a
-                          // href={post.category.href}
-                          className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
-                        >
-                          {event.name}
-                        </a>
-                      </div>
-                      <div className="group relative">
-                        <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
-                          <a href="#">
-                            <span className="absolute inset-0" />
-                            {event.name}
-                          </a>
-                        </h3>
-                        <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
-                          {event.description}
-                        </p>
-                      </div>
-                      <div className="relative mt-8 flex items-center gap-x-4">
-                        {/* <img
-                          src={event.image_url}
-                          alt=""
-                          className="h-10 w-10 rounded-full bg-gray-50"
-                        /> */}
-                        <div className="text-sm leading-6">
-                          <p className="font-semibold text-gray-900">
-                            <a href="#">
-                              <span className="absolute inset-0" />
-                              {event.organizer}
-                            </a>
-                          </p>
-                          {/* <p className="text-gray-600">{post.author.role}</p> */}
-                        </div>
-                      </div>
-                      <div className="mt-8 grid grid-cols-12 gap-x-2">
-                        <div className="col-span-3">
-                          <button
-                            onClick={() => joinEvent(id)}
-                            className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                          >
-                            Join
-                          </button>
-                        </div>
-                      </div>
-                    </article>
+                    <Event
+                      eventData={eventData}
+                      actionName={"View Event"}
+                      actionFunction={joinEvent}
+                    />
                   );
                 })}
               </div>
