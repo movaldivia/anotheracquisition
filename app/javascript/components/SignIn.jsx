@@ -30,7 +30,6 @@ export default function SignIn() {
       navigate("/app/events");
     } catch (error) {
       setErrorMessage("Invalid credentials");
-      console.error("There was a problem with the fetch operation:", error);
     }
   };
   return (

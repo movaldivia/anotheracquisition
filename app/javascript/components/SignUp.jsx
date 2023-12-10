@@ -1,19 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { setAuthCredentials } from "../api/auth";
 import axios from "axios";
 
 export default function SignUp() {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleSubmit = async (form) => {
-    const formData = new FormData();
-    formData.append("email", form.get("email"));
-    formData.append("password", form.get("password"));
-    formData.append("password_confirmation", form.get("password"));
-    formData.append("name", form.get("name"));
-
     try {
+      if (form.get("email") === "") {
+        throw new Error("invalid email");
+      }
+
+      if (form.get("name") === "") {
+        throw new Error("invalid name");
+      }
+
+      if (form.get("password") === "") {
+        throw new Error("invalid email");
+      }
+
+      const formData = new FormData();
+      formData.append("email", form.get("email"));
+      formData.append("password", form.get("password"));
+      formData.append("password_confirmation", form.get("password"));
+      formData.append("name", form.get("name"));
+
       const response = await axios({
         method: "post",
         url: "/auth",
@@ -21,32 +34,13 @@ export default function SignUp() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // const response = await fetch("/auth", {
-      //   method: "POST",
-      //   for
-      //   headers: {
-      //     "X-CSRF-Token": csrfToken(),
-      //   },
-      //   body: formData,
-      // });
-
-      // if (!response.ok) {
-      //   throw new Error("Network response was not ok");
-      // }
-
       setAuthCredentials(response);
-
-      // const bearerToken = response.headers.get("Authorization");
-
-      // localStorage.setItem("access-token", bearerToken);
-      // localStorage.setItem("client", bearerToken);
-      // localStorage.setItem("uid", bearerToken);
-      // localStorage.setItem("expiry", bearerToken);
-      // localStorage.setItem("token-type", bearerToken);
 
       navigate("/app/events");
     } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
+      setErrorMessage(
+        "Error, pls fill all the fields and try with another email or password"
+      );
     }
   };
   return (
@@ -127,7 +121,9 @@ export default function SignUp() {
               </button>
             </div>
           </form>
-
+          {errorMessage !== null ? (
+            <div className="text-red-500 mt-4">{errorMessage}</div>
+          ) : null}
           <p className="mt-10 text-center text-sm text-gray-500">
             Already a member?{" "}
             <Link
