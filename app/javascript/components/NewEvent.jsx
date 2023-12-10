@@ -173,7 +173,7 @@ export default function NewEvent() {
       formData.append("event[name]", form.get("name"));
       formData.append("event[description]", form.get("description"));
       formData.append("event[location]", form.get("location"));
-      formData.append("event[datetime]", date.toLocaleString());
+      formData.append("event[datetime]", date);
       formData.append("event[image]", form.get("file-upload"));
 
       await axios({
@@ -197,7 +197,7 @@ export default function NewEvent() {
   };
 
   return (
-    <div className="h-4/6 w-4/6 flex justify-center mt-24">
+    <div className="h-4/6 w-6/6 md:w-4/6 flex justify-center mt-24 px-12">
       <form action={id ? updateEvent : createEvent}>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">

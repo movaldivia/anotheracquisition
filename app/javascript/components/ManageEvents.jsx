@@ -299,7 +299,7 @@ export default function ManageEvents() {
   return (
     <>
       <NavBar location={"/app/events/manage"} />
-      <div className="bg-white py-24 sm:py-16">
+      <div className="bg-white py-16 sm:py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:mx-0">
             <Alert
