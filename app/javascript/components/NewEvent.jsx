@@ -28,6 +28,7 @@ export default function NewEvent() {
   const [isFileUploaded, setFileUploaded] = useState(false);
   const [fileName, setFileName] = useState("");
   const [date, setDate] = React.useState(null);
+  const [errors, setErrors] = useState([]);
 
   const handleFileUpload = (event) => {
     const uploadedFile = event.target.files[0];
@@ -54,6 +55,29 @@ export default function NewEvent() {
       } = JSON.parse(Cookies.get("cw_d_session_info"));
 
       const formData = new FormData();
+
+      const formErrors = [];
+
+      if (form.get("name") === "") {
+        formErrors.push("name");
+      }
+      if (form.get("description") === "") {
+        formErrors.push("description");
+      }
+      if (form.get("location") === "") {
+        formErrors.push("location");
+      }
+      if (date === null) {
+        formErrors.push("date");
+      }
+      if (form.get("file-upload").size === 0) {
+        formErrors.push("file-upload");
+      }
+
+      if (formErrors.length > 0) {
+        setErrors(formErrors);
+        throw new Error("Missed values");
+      }
 
       formData.append("event[name]", form.get("name"));
       formData.append("event[description]", form.get("description"));
@@ -109,6 +133,9 @@ export default function NewEvent() {
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
+                {errors.includes("name") && (
+                  <div className="text-red-500">Name is required</div>
+                )}
               </div>
               <div className="sm:col-span-4">
                 <label
@@ -141,6 +168,9 @@ export default function NewEvent() {
                     </div>
                   </div>
                 </div>
+                {errors.includes("file-upload") && (
+                  <div className="text-red-500">Image is required</div>
+                )}
               </div>
 
               <div className="sm:col-span-4">
@@ -155,6 +185,9 @@ export default function NewEvent() {
                   setValue={setDate}
                   className="block text-sm font-medium leading-6 text-gray-900"
                 />
+                {errors.includes("date") && (
+                  <div className="text-red-500">Datetime is required</div>
+                )}
               </div>
               <div className="sm:col-span-4">
                 <label
@@ -170,6 +203,9 @@ export default function NewEvent() {
                     id="location"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                  {errors.includes("location") && (
+                    <div className="text-red-500">Location is required</div>
+                  )}
                 </div>
               </div>
               <div className="col-span-full">
@@ -192,12 +228,15 @@ export default function NewEvent() {
                   Write a few sentences about your event and why people should
                   join.
                 </p>
+                {errors.includes("description") && (
+                  <div className="text-red-500">Description is required</div>
+                )}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-end gap-x-6">
+        <div className="mt-6 flex items-center justify-end gap-x-6 mb-4">
           <Link to="/app/events">
             <button
               type="button"

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -6,6 +6,7 @@ import { setAuthCredentials } from "../api/auth";
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleSubmit = async (form) => {
     const formData = new FormData();
@@ -28,6 +29,7 @@ export default function SignIn() {
 
       navigate("/app/events");
     } catch (error) {
+      setErrorMessage("Invalid credentials");
       console.error("There was a problem with the fetch operation:", error);
     }
   };
@@ -81,6 +83,7 @@ export default function SignIn() {
                 />
               </div>
             </div>
+            {errorMessage && <div className="text-red-500">{errorMessage}</div>}
 
             <div>
               <button

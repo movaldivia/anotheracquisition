@@ -80,6 +80,15 @@ export default function Events() {
     }
   }, []);
 
+  const options = {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+    timeZone: "UTC",
+  };
+
   const unjoinEvent = async (id) => {
     try {
       const {
@@ -310,6 +319,7 @@ export default function Events() {
                 {joinedEvents.map((eventData) => {
                   const id = eventData.id;
                   const event = eventData.attributes;
+                  const date1 = new Date(event.datetime);
                   return (
                     <article
                       key={id}
@@ -324,12 +334,18 @@ export default function Events() {
                         <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
                       </div>
                       <div className="flex items-center gap-x-4 text-xs">
-                        <time
+                        {/* <time
                           dateTime={event.datetime}
                           className="text-gray-500"
                         >
                           {event.datetime}
-                        </time>
+                        </time> */}
+                        <span className="text-gray-500">
+                          {" "}
+                          {new Intl.DateTimeFormat("en-GB", options).format(
+                            date1
+                          )}
+                        </span>
                         <a
                           // href={post.category.href}
                           className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
@@ -390,7 +406,6 @@ export default function Events() {
               </div>
               <div className="mx-auto pt-10 grid max-w-2xl grid-cols-1 gap-x-12 gap-y-32 border-t border-gray-200  lg:mx-0 lg:max-w-none lg:grid-cols-3">
                 {notJoinedEvents.map((eventData) => {
-                  console.log({ eventData });
                   const event = eventData.attributes;
                   const id = eventData.id;
 

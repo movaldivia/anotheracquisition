@@ -75,7 +75,7 @@ export default function ManageEvents() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const deleteEvent = (id) => {
+  const deleteEvent = async (id) => {
     const {
       "access-token": accessToken,
       "token-type": tokenType,
@@ -84,7 +84,7 @@ export default function ManageEvents() {
       uid,
       authorization,
     } = JSON.parse(Cookies.get("cw_d_session_info"));
-    axios.delete("/api/events", {
+    await axios.delete("/api/events", {
       headers: {
         "X-CSRF-Token": csrfToken(),
         "access-token": accessToken,
@@ -98,6 +98,22 @@ export default function ManageEvents() {
         id,
       },
     });
+
+    axios
+      .get("/api/events/owner", {
+        headers: {
+          "X-CSRF-Token": csrfToken(),
+          "access-token": accessToken,
+          "token-type": tokenType,
+          client,
+          expiry,
+          uid,
+          authorization,
+        },
+      })
+      .then((response) => {
+        setJoinedEvents(response.data);
+      });
   };
 
   useEffect(() => {
