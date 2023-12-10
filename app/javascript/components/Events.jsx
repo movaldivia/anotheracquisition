@@ -301,20 +301,6 @@ export default function Events() {
               Find and organize the best events near your neighborhood
             </p>
           </div>
-          {/* <div className="flex mt-8">
-            <Link
-              to="/app/events/new"
-              className="mr-2 rounded-md border-2 border-indigo-600 bg-indigo-600 px-8 md:px-8 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 hover:border-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Create Event
-            </Link>
-            <Link
-              to="/app/events/manage"
-              className=" rounded-md border-2 border-indigo-600 bg-white px-8 md:px-8 py-3 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-gray-50 hover:border-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Manage Events
-            </Link>
-          </div> */}
           {joinedEvents.length > 0 && (
             <div>
               <div className="mt-10 sm:mt-16 text-xl pb-2 font-bold tracking-tight text-gray-900 sm:text-2xl">
@@ -322,12 +308,21 @@ export default function Events() {
               </div>
               <div className="mx-auto pt-10 grid max-w-2xl grid-cols-1 gap-x-12 gap-y-32 border-t border-gray-200  lg:mx-0 lg:max-w-none lg:grid-cols-3">
                 {joinedEvents.map((eventData) => {
+                  const id = eventData.id;
                   const event = eventData.attributes;
                   return (
                     <article
-                      key={event.id}
+                      key={id}
                       className="flex max-w-xl flex-col items-start justify-between"
                     >
+                      <div className="relative w-full">
+                        <img
+                          src={event.image_url}
+                          alt=""
+                          className="aspect-[16/9] w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
+                        />
+                        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
+                      </div>
                       <div className="flex items-center gap-x-4 text-xs">
                         <time
                           dateTime={event.datetime}
@@ -335,12 +330,12 @@ export default function Events() {
                         >
                           {event.datetime}
                         </time>
-                        {/* <a
-                  href={post.category.href}
-                  className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
-                >
-                  {post.category.title}
-                </a> */}
+                        <a
+                          // href={post.category.href}
+                          className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
+                        >
+                          {event.name}
+                        </a>
                       </div>
                       <div className="group relative">
                         <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
@@ -363,7 +358,10 @@ export default function Events() {
                           <p className="font-semibold text-gray-900">
                             <a href="#">
                               <span className="absolute inset-0" />
-                              {event.organizer}
+                              Organizer{" "}
+                              <span className="capitalize">
+                                {event.organizer}
+                              </span>
                             </a>
                           </p>
                           {/* <p className="text-gray-600">{post.author.role}</p> */}
@@ -372,7 +370,7 @@ export default function Events() {
                       <div className="mt-8 grid grid-cols-12 gap-x-2">
                         <div className="col-span-3">
                           <button
-                            onClick={() => unjoinEvent(event.id)}
+                            onClick={() => unjoinEvent(id)}
                             className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                           >
                             Unjoin
@@ -392,11 +390,13 @@ export default function Events() {
               </div>
               <div className="mx-auto pt-10 grid max-w-2xl grid-cols-1 gap-x-12 gap-y-32 border-t border-gray-200  lg:mx-0 lg:max-w-none lg:grid-cols-3">
                 {notJoinedEvents.map((eventData) => {
+                  console.log({ eventData });
                   const event = eventData.attributes;
+                  const id = eventData.id;
 
                   return (
                     <article
-                      key={event.id}
+                      key={id}
                       className="flex max-w-xl flex-col items-start justify-between"
                     >
                       <div className="relative w-full">
@@ -414,12 +414,12 @@ export default function Events() {
                         >
                           {event.datetime}
                         </time>
-                        {/* <a
-                  href={post.category.href}
-                  className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
-                >
-                  {post.category.title}
-                </a> */}
+                        <a
+                          // href={post.category.href}
+                          className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
+                        >
+                          {event.name}
+                        </a>
                       </div>
                       <div className="group relative">
                         <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
@@ -433,11 +433,11 @@ export default function Events() {
                         </p>
                       </div>
                       <div className="relative mt-8 flex items-center gap-x-4">
-                        <img
+                        {/* <img
                           src={event.image_url}
                           alt=""
                           className="h-10 w-10 rounded-full bg-gray-50"
-                        />
+                        /> */}
                         <div className="text-sm leading-6">
                           <p className="font-semibold text-gray-900">
                             <a href="#">
@@ -451,7 +451,7 @@ export default function Events() {
                       <div className="mt-8 grid grid-cols-12 gap-x-2">
                         <div className="col-span-3">
                           <button
-                            onClick={() => joinEvent(event.id)}
+                            onClick={() => joinEvent(id)}
                             className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                           >
                             Join

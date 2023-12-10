@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { csrfToken } from "../utils/csrfToken";
@@ -10,11 +10,14 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
-export function BasicDateTimePicker() {
+export function BasicDateTimePicker({ value, setValue }) {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DemoContainer components={["DateTimePicker"]}>
-        <DateTimePicker />
+        <DateTimePicker
+          value={value}
+          onChange={(newValue) => setValue(newValue)}
+        />
       </DemoContainer>
     </LocalizationProvider>
   );
@@ -22,6 +25,23 @@ export function BasicDateTimePicker() {
 
 export default function NewEvent() {
   const navigate = useNavigate();
+  const [isFileUploaded, setFileUploaded] = useState(false);
+  const [fileName, setFileName] = useState("");
+  const [date, setDate] = React.useState(null);
+
+  const handleFileUpload = (event) => {
+    const uploadedFile = event.target.files[0];
+
+    if (uploadedFile) {
+      const fileName = uploadedFile.name;
+      const shortenedFileName =
+        fileName.length > 15 ? `${fileName.substring(0, 12)}...` : fileName;
+
+      setFileName(shortenedFileName);
+      setFileUploaded(true);
+    }
+  };
+
   const createEvent = async (form) => {
     try {
       const {
@@ -38,7 +58,7 @@ export default function NewEvent() {
       formData.append("event[name]", form.get("name"));
       formData.append("event[description]", form.get("description"));
       formData.append("event[location]", form.get("location"));
-      formData.append("event[datetime]", new Date().toLocaleString());
+      formData.append("event[datetime]", date.toLocaleString());
       formData.append("event[image]", form.get("file-upload"));
 
       await axios({
@@ -90,37 +110,35 @@ export default function NewEvent() {
                   />
                 </div>
               </div>
-              <div className="col-span-full">
+              <div className="sm:col-span-4">
                 <label
                   htmlFor="cover-photo"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Cover photo
+                  Cover photo (PNG, JPG)
                 </label>
-                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                  <div className="text-center">
-                    <PhotoIcon
-                      className="mx-auto h-12 w-12 text-gray-300"
-                      aria-hidden="true"
-                    />
-                    <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                <div className="mt-2 flex rounded-lg border-gray-900/25 sm:col-span-4">
+                  <div className="w-full">
+                    <div className=" flex text-sm leading-6 text-gray-600 w-full">
                       <label
                         htmlFor="file-upload"
-                        className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                        className="mt-2 relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 w-full flex"
                       >
-                        <span>Upload a file</span>
+                        <span className="border rounded-md py-1.5 px-3.5 ">
+                          Upload a file
+                        </span>
                         <input
                           id="file-upload"
                           name="file-upload"
                           type="file"
                           className="sr-only"
+                          onChange={handleFileUpload}
                         />
+                        <span className="pl-3 text-gray-900 font-normal py-1.5 px-3.5 ">
+                          {isFileUploaded ? `${fileName}` : "No file chosen"}
+                        </span>
                       </label>
-                      <p className="pl-1">or drag and drop</p>
                     </div>
-                    <p className="text-xs leading-5 text-gray-600">
-                      PNG, JPG, GIF up to 10MB
-                    </p>
                   </div>
                 </div>
               </div>
@@ -132,7 +150,11 @@ export default function NewEvent() {
                 >
                   Date
                 </label>
-                <BasicDateTimePicker className="block text-sm font-medium leading-6 text-gray-900" />
+                <BasicDateTimePicker
+                  value={date}
+                  setValue={setDate}
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                />
               </div>
               <div className="sm:col-span-4">
                 <label
