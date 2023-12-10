@@ -21,8 +21,6 @@ export default function SignUp() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log({ response });
-
       // const response = await fetch("http://localhost:3000/auth", {
       //   method: "POST",
       //   for

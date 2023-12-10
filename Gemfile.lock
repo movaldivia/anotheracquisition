@@ -136,6 +136,8 @@ GEM
       activesupport (>= 5.0.0)
     jsbundling-rails (1.2.1)
       railties (>= 6.0.0)
+    jsonapi-serializer (2.2.0)
+      activesupport (>= 4.2)
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -302,6 +304,7 @@ DEPENDENCIES
   hotwire-livereload
   jbuilder
   jsbundling-rails
+  jsonapi-serializer (~> 2.2)
   puma (>= 5.0)
   rails (~> 7.1.2)
   redis (>= 4.0.1)

@@ -12,7 +12,7 @@ class EventsController < ApplicationController
           else
             events = Event.all
           end
-          render json: events
+          render json: EventSerializer.new(events).serializable_hash
       end
 
       def index_from_owner
@@ -55,6 +55,6 @@ class EventsController < ApplicationController
       private
     
       def event_params
-        params.require(:event).permit(:name, :description, :datetime, :location).merge(owner_id: current_user.id)
+        params.require(:event).permit(:name, :description, :datetime, :location, :image).merge(owner_id: current_user.id)
       end
 end

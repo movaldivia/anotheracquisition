@@ -145,7 +145,6 @@ export default function ManageEvents() {
           },
         })
         .then((response) => {
-          console.log({ events: response.data });
           setJoinedEvents(response.data);
         });
 
@@ -194,7 +193,6 @@ export default function ManageEvents() {
           },
         })
         .then((response) => {
-          console.log({ events: response.data });
           setJoinedEvents(response.data);
         });
 
@@ -211,7 +209,6 @@ export default function ManageEvents() {
           },
         })
         .then((response) => {
-          console.log({ events: response.data });
           setNotJoinedEvents(response.data);
         });
 
@@ -245,7 +242,6 @@ export default function ManageEvents() {
           },
         })
         .then((response) => {
-          console.log({ events: response.data });
           setJoinedEvents(response.data);
         });
     } catch (error) {
@@ -277,7 +273,6 @@ export default function ManageEvents() {
           },
         })
         .then((response) => {
-          console.log({ events: response.data });
           setNotJoinedEvents(response.data);
         });
     } catch (error) {

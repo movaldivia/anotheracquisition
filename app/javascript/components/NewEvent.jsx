@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { csrfToken } from "../utils/csrfToken";
 import Cookies from "js-cookie";
+import { PhotoIcon } from "@heroicons/react/24/solid";
 
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -32,6 +33,14 @@ export default function NewEvent() {
         authorization,
       } = JSON.parse(Cookies.get("cw_d_session_info"));
 
+      const formData = new FormData();
+
+      formData.append("event[name]", form.get("name"));
+      formData.append("event[description]", form.get("description"));
+      formData.append("event[location]", form.get("location"));
+      formData.append("event[datetime]", new Date().toLocaleString());
+      formData.append("event[image]", form.get("file-upload"));
+
       await axios({
         method: "post",
         headers: {
@@ -43,12 +52,7 @@ export default function NewEvent() {
           uid,
           authorization,
         },
-        data: {
-          name: form.get("name"),
-          description: form.get("description"),
-          location: form.get("location"),
-          datetime: new Date().toLocaleString(),
-        },
+        data: formData,
         url: "http://localhost:3000/api/events/",
       });
       navigate("/app/events?status=success");
@@ -86,6 +90,41 @@ export default function NewEvent() {
                   />
                 </div>
               </div>
+              <div className="col-span-full">
+                <label
+                  htmlFor="cover-photo"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Cover photo
+                </label>
+                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                  <div className="text-center">
+                    <PhotoIcon
+                      className="mx-auto h-12 w-12 text-gray-300"
+                      aria-hidden="true"
+                    />
+                    <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                      <label
+                        htmlFor="file-upload"
+                        className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                      >
+                        <span>Upload a file</span>
+                        <input
+                          id="file-upload"
+                          name="file-upload"
+                          type="file"
+                          className="sr-only"
+                        />
+                      </label>
+                      <p className="pl-1">or drag and drop</p>
+                    </div>
+                    <p className="text-xs leading-5 text-gray-600">
+                      PNG, JPG, GIF up to 10MB
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <div className="sm:col-span-4">
                 <label
                   htmlFor="date"
