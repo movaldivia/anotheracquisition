@@ -66,14 +66,21 @@ function Alert({ show, setShow, title, description }) {
 }
 
 export default function ManageEvents() {
-  const [notJoinedEvents, setNotJoinedEvents] = useState([]);
   const [joinedEvents, setJoinedEvents] = useState([]);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showSuccessJoinMessage, setShowSuccessJoinMessage] = useState(false);
   const [showSuccessUnjoinMessage, setShowSuccessUnjoinMessage] =
     useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+
+  const options = {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+    timeZone: "UTC",
+  };
 
   const deleteEvent = async (id) => {
     const {
@@ -122,118 +129,6 @@ export default function ManageEvents() {
     }
   }, []);
 
-  const unjoinEvent = async (id) => {
-    try {
-      const {
-        "access-token": accessToken,
-        "token-type": tokenType,
-        client,
-        expiry,
-        uid,
-        authorization,
-      } = JSON.parse(Cookies.get("cw_d_session_info"));
-
-      await axios({
-        url: "/api/events/unjoin",
-        method: "post",
-        headers: {
-          "X-CSRF-Token": csrfToken(),
-          "access-token": accessToken,
-          "token-type": tokenType,
-          client,
-          expiry,
-          uid,
-          authorization,
-        },
-        data: { id },
-      });
-
-      axios
-        .get("/api/events/owner", {
-          headers: {
-            "X-CSRF-Token": csrfToken(),
-            "access-token": accessToken,
-            "token-type": tokenType,
-            client,
-            expiry,
-            uid,
-            authorization,
-          },
-        })
-        .then((response) => {
-          setJoinedEvents(response.data);
-        });
-
-      setShowSuccessUnjoinMessage(true);
-    } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
-    }
-  };
-
-  const joinEvent = async (id) => {
-    try {
-      const {
-        "access-token": accessToken,
-        "token-type": tokenType,
-        client,
-        expiry,
-        uid,
-        authorization,
-      } = JSON.parse(Cookies.get("cw_d_session_info"));
-
-      await axios({
-        url: "/api/events/join",
-        method: "post",
-        headers: {
-          "X-CSRF-Token": csrfToken(),
-          "access-token": accessToken,
-          "token-type": tokenType,
-          client,
-          expiry,
-          uid,
-          authorization,
-        },
-        data: { id },
-      });
-
-      axios
-        .get("/api/events/owner", {
-          headers: {
-            "X-CSRF-Token": csrfToken(),
-            "access-token": accessToken,
-            "token-type": tokenType,
-            client,
-            expiry,
-            uid,
-            authorization,
-          },
-        })
-        .then((response) => {
-          setJoinedEvents(response.data);
-        });
-
-      axios
-        .get("/api/events/owner", {
-          headers: {
-            "X-CSRF-Token": csrfToken(),
-            "access-token": accessToken,
-            "token-type": tokenType,
-            client,
-            expiry,
-            uid,
-            authorization,
-          },
-        })
-        .then((response) => {
-          setNotJoinedEvents(response.data);
-        });
-
-      setShowSuccessJoinMessage(true);
-    } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
-    }
-  };
-
   useEffect(() => {
     try {
       const {
@@ -259,37 +154,6 @@ export default function ManageEvents() {
         })
         .then((response) => {
           setJoinedEvents(response.data);
-        });
-    } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    try {
-      const {
-        "access-token": accessToken,
-        "token-type": tokenType,
-        client,
-        expiry,
-        uid,
-        authorization,
-      } = JSON.parse(Cookies.get("cw_d_session_info"));
-
-      axios
-        .get("/api/events/owner", {
-          headers: {
-            "X-CSRF-Token": csrfToken(),
-            "access-token": accessToken,
-            "token-type": tokenType,
-            client,
-            expiry,
-            uid,
-            authorization,
-          },
-        })
-        .then((response) => {
-          setNotJoinedEvents(response.data);
         });
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
@@ -344,18 +208,15 @@ export default function ManageEvents() {
                 {joinedEvents.map((event) => (
                   <article
                     key={event.id}
-                    className="flex max-w-xl flex-col items-start justify-between"
+                    className="flex max-w-xl flex-col items-start "
                   >
                     <div className="flex items-center gap-x-4 text-xs">
-                      <time dateTime={event.datetime} className="text-gray-500">
-                        {event.datetime}
-                      </time>
-                      {/* <a
-                  href={post.category.href}
-                  className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
-                >
-                  {post.category.title}
-                </a> */}
+                      <div className="text-gray-500 ml-1">
+                        {" "}
+                        {new Intl.DateTimeFormat("en-GB", options).format(
+                          new Date(event.datetime)
+                        )}
+                      </div>
                     </div>
                     <div className="group relative">
                       <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
@@ -364,16 +225,11 @@ export default function ManageEvents() {
                           {event.name}
                         </a>
                       </h3>
-                      <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
+                      <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600 min-h-[4.8rem]">
                         {event.description}
                       </p>
                     </div>
                     <div className="relative mt-8 flex items-center gap-x-4">
-                      {/* <img
-                  src={post.author.imageUrl}
-                  alt=""
-                  className="h-10 w-10 rounded-full bg-gray-50"
-                /> */}
                       <div className="text-sm leading-6">
                         <p className="font-semibold text-gray-900">
                           <a href="#">
@@ -381,7 +237,6 @@ export default function ManageEvents() {
                             {event.organizer}
                           </a>
                         </p>
-                        {/* <p className="text-gray-600">{post.author.role}</p> */}
                       </div>
                     </div>
                     <div className="mt-8 grid grid-cols-12 gap-x-2">

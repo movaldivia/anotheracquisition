@@ -108,7 +108,7 @@ export default function NewEvent() {
         formData.append("event[location]", form.get("location"));
       }
       if (date !== null) {
-        formData.append("event[datetime]", date.toLocaleString());
+        formData.append("event[datetime]", date);
       }
       if (form.get("file-upload").size !== 0) {
         formData.append("event[image]", form.get("file-upload"));
