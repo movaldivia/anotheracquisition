@@ -1,24 +1,37 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Eventill an opensource event management app.
 
-Things you may want to cover:
+Production/Demo: https://eventill.co/
 
-* Ruby version
+# Setup
 
-* System dependencies
+Prerequisites
 
-* Configuration
+- Ruby 3.2.2
+- Sqlite3 3.39.5
+- Rails 7.1
 
-* Database creation
+```
+bundle install
+```
 
-* Database initialization
+```
+yarn install
+```
 
-* How to run the test suite
+# Tests
 
-* Services (job queues, cache servers, search engines, etc.)
+I used Rspec.
 
-* Deployment instructions
+To check the coverage, you have to run the test first. Then, the gem Simplecov create a directory called coverage in the root.
+You can open the index.html to check it.
 
-* ...
+```
+bundle exec rspec ./spec
+```
+
+# Stack
+
+- Ruby on Rails (backend)
+- React (frontend)
