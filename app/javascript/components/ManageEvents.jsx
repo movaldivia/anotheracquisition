@@ -84,7 +84,7 @@ export default function ManageEvents() {
       uid,
       authorization,
     } = JSON.parse(Cookies.get("cw_d_session_info"));
-    axios.delete("http://localhost:3000/api/events", {
+    axios.delete("/api/events", {
       headers: {
         "X-CSRF-Token": csrfToken(),
         "access-token": accessToken,
@@ -118,7 +118,7 @@ export default function ManageEvents() {
       } = JSON.parse(Cookies.get("cw_d_session_info"));
 
       await axios({
-        url: "http://localhost:3000/api/events/unjoin",
+        url: "/api/events/unjoin",
         method: "post",
         headers: {
           "X-CSRF-Token": csrfToken(),
@@ -133,7 +133,7 @@ export default function ManageEvents() {
       });
 
       axios
-        .get("http://localhost:3000/api/events/owner", {
+        .get("/api/events/owner", {
           headers: {
             "X-CSRF-Token": csrfToken(),
             "access-token": accessToken,
@@ -166,7 +166,7 @@ export default function ManageEvents() {
       } = JSON.parse(Cookies.get("cw_d_session_info"));
 
       await axios({
-        url: "http://localhost:3000/api/events/join",
+        url: "/api/events/join",
         method: "post",
         headers: {
           "X-CSRF-Token": csrfToken(),
@@ -181,7 +181,7 @@ export default function ManageEvents() {
       });
 
       axios
-        .get("http://localhost:3000/api/events/owner", {
+        .get("/api/events/owner", {
           headers: {
             "X-CSRF-Token": csrfToken(),
             "access-token": accessToken,
@@ -197,7 +197,7 @@ export default function ManageEvents() {
         });
 
       axios
-        .get("http://localhost:3000/api/events/owner", {
+        .get("/api/events/owner", {
           headers: {
             "X-CSRF-Token": csrfToken(),
             "access-token": accessToken,
@@ -230,7 +230,7 @@ export default function ManageEvents() {
       } = JSON.parse(Cookies.get("cw_d_session_info"));
 
       axios
-        .get("http://localhost:3000/api/events/owner", {
+        .get("/api/events/owner", {
           headers: {
             "X-CSRF-Token": csrfToken(),
             "access-token": accessToken,
@@ -261,7 +261,7 @@ export default function ManageEvents() {
       } = JSON.parse(Cookies.get("cw_d_session_info"));
 
       axios
-        .get("http://localhost:3000/api/events/owner", {
+        .get("/api/events/owner", {
           headers: {
             "X-CSRF-Token": csrfToken(),
             "access-token": accessToken,

@@ -23,7 +23,7 @@ export default function NavBar({ location }) {
     } = JSON.parse(Cookies.get("cw_d_session_info"));
 
     axios
-      .delete("http://localhost:3000/auth/sign_out", {
+      .delete("/auth/sign_out", {
         headers: {
           "X-CSRF-Token": csrfToken(),
           "access-token": accessToken,

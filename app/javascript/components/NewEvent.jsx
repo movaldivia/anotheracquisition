@@ -53,7 +53,7 @@ export default function NewEvent() {
           authorization,
         },
         data: formData,
-        url: "http://localhost:3000/api/events/",
+        url: "/api/events/",
       });
       navigate("/app/events?status=success");
     } catch (error) {

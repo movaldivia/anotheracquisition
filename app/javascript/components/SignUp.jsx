@@ -16,12 +16,12 @@ export default function SignUp() {
     try {
       const response = await axios({
         method: "post",
-        url: "http://localhost:3000/auth",
+        url: "/auth",
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // const response = await fetch("http://localhost:3000/auth", {
+      // const response = await fetch("/auth", {
       //   method: "POST",
       //   for
       //   headers: {

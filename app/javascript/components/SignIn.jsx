@@ -15,7 +15,7 @@ export default function SignIn() {
     try {
       const response = await axios({
         method: "post",
-        url: "http://localhost:3000/auth/sign_in",
+        url: "/auth/sign_in",
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
       });
