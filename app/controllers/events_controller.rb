@@ -1,5 +1,8 @@
 class EventsController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_event, only: [:update, :destroy]
+  before_action :authorize_user!, only: [:update, :destroy]
+
       def index
           status = params[:status]
 
@@ -26,7 +29,7 @@ class EventsController < ApplicationController
       end
 
       def destroy
-        Event.find(params[:id]).destroy
+        @event.destroy
         head :no_content
       end
 
@@ -48,14 +51,23 @@ class EventsController < ApplicationController
       end
     
       def update
-        event = Event.find(params[:id])
-        event.update!(event_params)
-        render json: event
+        @event.update!(event_params)
+        render json: @event
       end
     
       private
     
       def event_params
         params.require(:event).permit(:name, :description, :datetime, :location, :image).merge(owner_id: current_user.id)
+      end
+
+      def set_event
+        @event = Event.find(params[:id])
+      end
+    
+      def authorize_user!
+        unless current_user == @event.owner
+          render json: { error: "You are not authorized to perform this action." }, status: :unauthorized
+        end
       end
 end
