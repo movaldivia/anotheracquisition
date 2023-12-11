@@ -9,17 +9,17 @@ class EventsController < ApplicationController
           events = nil
 
           if status.present? and status == 'JOINED'
-            events = current_user.joined_events
+            events = current_user.joined_events.order(id: :desc)
           elsif status.present? and status == 'NOT_JOINED'
-            events = Event.where.not(id: current_user.joined_event_ids)
+            events = Event.where.not(id: current_user.joined_event_ids).order(id: :desc)
           else
-            events = Event.all
+            events = Event.all.order(id: :desc)
           end
           render json: EventSerializer.new(events).serializable_hash
       end
 
       def index_from_owner
-        events = Event.where(owner_id: current_user.id)
+        events = Event.where(owner_id: current_user.id).order(id: :desc)
         render json: events
       end
 
